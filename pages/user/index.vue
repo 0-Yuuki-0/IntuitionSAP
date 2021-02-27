@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="main-content">
     <div class="page-heading">
       <h3>Appointments</h3>
     </div>
@@ -10,10 +10,17 @@
                     <div class="card-header">
                         <h4>Upcoming Appointment</h4>
                     </div>
-                    <div class="card-body text-center">
+                    <!-- <div class="card-body text-center">
                         <i class='bi bi-alarm-fill alarm-icon'></i>
                         <h3>Next appointment in:</h3>
                         <h1>1 days 10 hours 3 minutes 60 secs</h1>
+                        <button class="btn btn-lg btn-primary">Check in</button>
+                    </div> -->
+
+                    <!-- If havent make any appointmeny -->
+                    <div class="card-body text-center">
+                        <h3>You have not made any appointment yet</h3>
+                        <nuxt-link :to="{name: 'user-appointment-new'}" class="btn btn-primary btn-lg">Make an Appointment Now</nuxt-link>
                     </div>
                 </div>
             </div>

@@ -7,5 +7,15 @@ export default [
         "name": "Dashboard",
         "url": "/clinic",
         "icon": "grid-fill"
-    }
+    },
+    {
+        "name": "Schedules",
+        "url": "/clinic/schedules",
+        "icon": "alarm-fill"
+    },
+    {
+        "name": "Patients",
+        "url": "/clinic/patients",
+        "icon": "people-fill"
+    },
 ];

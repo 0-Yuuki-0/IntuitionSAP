@@ -12,19 +12,19 @@
         </div>
         <div class="sidebar-menu">
             <ul class="menu">
-                <template v-for="item in $store.state.userSidebarItems">
-                    <li class="sidebar-title" v-if="item.isTitle" :key="item">
+                <template v-for="(item,index) in $store.state.userSidebarItems">
+                    <li class="sidebar-title" v-if="item.isTitle" :key="index">
                         {{ item.name }}
                     </li>
-                    <li class="sidebar-item" :class="{ 'active' : isActive(item.url), 'has-sub' : isHasSub(item) }" v-else :key="item">
+                    <li class="sidebar-item" :class="{ 'active' : isActive(item.url), 'has-sub' : isHasSub(item) }" v-else :key="index">
                         <nuxt-link class="sidebar-link" :to="item.url">
                             <i :class="`bi bi-${item.icon}`"></i>
                             <span>{{ item.name }}</span>
                         </nuxt-link>
                         <template v-if="item.hasOwnProperty('submenu')">
                             <ul :class="`submenu active`" v-if="item.submenu.length > 0">
-                                <template v-for="sub in item.submenu">
-                                    <li :key="sub">
+                                <template v-for="(sub,idx) in item.submenu">
+                                    <li :key="idx">
                                         <nuxt-link :to="sub.url">{{ sub.name }}</nuxt-link>
                                     </li>
                                 </template>
