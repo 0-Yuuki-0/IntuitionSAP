@@ -3,7 +3,7 @@
       <div id="sidebar" class="active">
           <SidebarUser></SidebarUser>
       </div>
-      <div id="main">
+      <div id="main" class='layout-navbar'>
           <Header></Header>
           <Nuxt/>
           <Footer></Footer>

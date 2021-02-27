@@ -12,8 +12,8 @@
         </div>
         <div class="sidebar-menu">
             <ul class="menu">
-                <template v-for="item in $store.state.clinicSidebarItems">
-                    <li class="sidebar-title" v-if="item.isTitle" :key="item">
+                <template v-for="(item,index) in $store.state.clinicSidebarItems">
+                    <li class="sidebar-title" v-if="item.isTitle" :key="index">
                         {{ item.name }}
                     </li>
                     <li class="sidebar-item" :class="{ 'active' : isActive(item.url), 'has-sub' : isHasSub(item) }" v-else :key="item">
@@ -23,8 +23,8 @@
                         </nuxt-link>
                         <template v-if="item.hasOwnProperty('submenu')">
                             <ul :class="`submenu active`" v-if="item.submenu.length > 0">
-                                <template v-for="sub in item.submenu">
-                                    <li :key="sub">
+                                <template v-for="(sub,idx) in item.submenu">
+                                    <li :key="idx">
                                         <nuxt-link :to="sub.url">{{ sub.name }}</nuxt-link>
                                     </li>
                                 </template>
@@ -54,7 +54,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
+@import "@/assets/scss/pages/chat.scss";
 [class^="bi-"]::before, [class*=" bi-"]::before {
     vertical-align: text-top;
 }
