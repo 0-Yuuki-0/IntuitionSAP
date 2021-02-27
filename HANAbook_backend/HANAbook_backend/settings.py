@@ -59,7 +59,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
-    # 'https://hanabook.cfapps.ap21.hana.ondemand.com/',
+    'https://hanabook-td82363140927.dispatcher.eu2.hana.ondemand.com/'
 )
 
 ROOT_URLCONF = 'HANAbook_backend.urls'
