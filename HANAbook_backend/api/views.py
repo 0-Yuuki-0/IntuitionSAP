@@ -79,6 +79,21 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
         serializer.save(is_patient=True)
 
 
+class PatientRetriveAPIView(generics.RetriveAPIView):
+    serializer_class = PatientSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        qs = Patient.objects.all()
+
+        # filter by permissions
+        user = self.request.user
+        if user.is_patient:
+            qs = qs.filter(id=user.id)
+        
+        return qs
+
+
 class AppointmentListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = AppointmentSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -181,4 +196,24 @@ def generate_appts(request):
     
     # return JsonResponse(all_appts, safe=False)
     return Response(all_appts, safe=False)
+
+
+class DoctorListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = DoctorSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        if user.is_patient:
+            return Response({'message': "Patient cannot create Doctors."}, status=status.HTTP_401_UNAUTHORIZED)
+        if user.is_clinic:
+            clinic = Clinic.objects.get(id=user.id)
+            request.data['clinic'] = clinic.name
+        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 

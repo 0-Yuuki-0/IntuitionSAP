@@ -4,34 +4,6 @@ from django.contrib.auth.base_user import BaseUserManager
 from datetime import datetime
 
 # Create your models here.
-'''
-    user
-        +admin
-        clinic
-        patient
-
-    each patient has
-        history - past appt
-        appt - future appt
-        +info in categories
-    each history
-        appt
-
-    each clinic has a
-        schedule
-    # each schedule has
-    #     sched_day
-
-    - function - create availbale appts for a single day
-
-    each sched_day has
-        appts
-    each appt can be
-        +has date time
-        available
-        booked
-        confirmed (checked in)
-'''
 
 MAX_AGE = 65
 APPT_STATUS = [
@@ -135,3 +107,4 @@ class Appointment(models.Model):
 class Doctor(models.Model):
     name = models.CharField(max_length=255, unique=True)
     specialty = models.CharField(max_length=255)
+    clinic = models.ForeignKey(Clinic, to_field='name', db_column='clinic_name', on_delete=models.CASCADE)
