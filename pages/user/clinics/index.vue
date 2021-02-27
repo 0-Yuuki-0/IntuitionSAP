@@ -1,14 +1,14 @@
 <template>
   <div id="main-content">
     <div class="page-heading">
-      <h3>Patients</h3>
+      <h3>Schedules</h3>
     </div>
     <div class="page-content">
         <section class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>All Patients</h4>
+                        <h4>All Schedules</h4>
                     </div>
                     <div class="card-body ">
                         <table class='table table-hover'>
@@ -46,10 +46,10 @@
 
 <script>
 export default {
-  layout: 'sidebar-clinic',
+  layout: 'sidebar-user',
   data() {
       return {
-
+          
       }
   },
 };

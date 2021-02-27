@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="main-content">
     <div class="page-heading">
       <h3>Schedules</h3>
     </div>

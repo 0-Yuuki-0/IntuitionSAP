@@ -12,8 +12,10 @@
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Your Name</label>
-                            <input type="email" class="form-control" id="name" placeholder="John Doe">
+                            <label for="name" class="form-label">Choose Hospital/Clinic</label>
+                            <select name="" class='form-control' id="">
+                                <option value="">National Hospital ~ 0.38 KM</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Choose Appointment Date</label>
