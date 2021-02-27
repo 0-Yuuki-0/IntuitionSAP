@@ -7,13 +7,14 @@ clinic_patterns = [
 
 patient_patterns = [
     path('', PatientListCreateAPIView.as_view()),
-    path('<str:pk>/', PatientRetriveAPIView.as_view())
+    path('<str:pk>/', PatientRetriveDestroyAPIView.as_view())
 ]
 
 appointment_patterns = [
     path('', AppointmentListCreateAPIView.as_view()),
     path('<str:pk>/', AppointmentRetrieveDestroyAPIView.as_view()),
-    path('generate/', generate_appts)
+    path('generate/', generate_appts),
+    path('get_appt/', get_appt)
 ]
 
 doctor_patterns = [

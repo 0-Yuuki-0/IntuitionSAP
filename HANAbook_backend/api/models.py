@@ -12,8 +12,33 @@ APPT_STATUS = [
     ('CONFIRMED', 'confirmed')
 ]
 
-# user
-#     address
+
+class CustomUserManager(BaseUserManager):
+
+    def create_user(self, email, password, **extra_fields):
+        '''
+        Create and save a user with the given email and password.
+        '''
+        if not email:
+            raise ValueError('email must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        '''
+        Create and save a superuser with the given email and password.
+        '''
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault('is_staff', True)
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('superuser must have is_superuser set to True')
+        return self.create_user(email, password, **extra_fields)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(unique=True)
@@ -37,32 +62,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-
-
-class CustomUserManager(BaseUserManager):
-
-    def create_user(self, username, password, **extra_fields):
-        '''
-        Create and save a user with the given email and password.
-        '''
-        if not email:
-            raise ValueError('email must be set')
-        email = self.normalize_email(email)
-        user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save()
-        return user
-
-    def create_superuser(self, email, password, **extra_fields):
-        '''
-        Create and save a superuser with the given email and password.
-        '''
-        extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_active', True)
-        extra_fields.setdefault('is_staff', True)
-        if extra_fields.get('is_superuser') is not True:
-            raise ValueError('superuser must have is_superuser set to True')
-        return self.create_user(email, password, **extra_fields)
 
 
 class Clinic(User):
@@ -92,6 +91,12 @@ class Patient(User):
             super(Patient, self).save(*args, **kwargs)
 
 
+class Doctor(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    specialty = models.CharField(max_length=255)
+    clinic = models.ForeignKey(Clinic, to_field='name', db_column='clinic_name', on_delete=models.CASCADE)
+
+
 class Appointment(models.Model):
     clinic = models.ForeignKey(Clinic, to_field='name', db_column='clinic_name', on_delete=models.CASCADE)
     date_time = models.DateTimeField(null=True, blank=True)
@@ -102,9 +107,3 @@ class Appointment(models.Model):
     def save(self, *args, **kwargs):
         if self.date_time == None:
             self.date_time = datetime.datetime.now()
-
-
-class Doctor(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    specialty = models.CharField(max_length=255)
-    clinic = models.ForeignKey(Clinic, to_field='name', db_column='clinic_name', on_delete=models.CASCADE)

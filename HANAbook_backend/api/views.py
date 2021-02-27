@@ -8,6 +8,7 @@ from rest_framework import permissions
 
 # from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
+from rest_framework.decorators import api_view, permission_classes
 
 '''
     Authentication APIs:
@@ -59,9 +60,9 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         qs = Patient.objects.all()
+        user = self.request.user
 
-        if self.user.is_anonymous:
-            return Response({'message': "Sign in to view Patients."}, status=status.HTTP_401_UNAUTHORIZED)
+        print(1)
 
         # custom filters
         # username = self.request.query_params.get('username')
@@ -69,9 +70,11 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
         #     qs = qs.filter(username=username)
 
         # filter by permissions
-        user = self.request.user
-        if user.is_patient:
+        if user.is_anonymous:
+            return Response({'message': "Sign in to view Patients."}, status=status.HTTP_401_UNAUTHORIZED)
+        elif user.is_patient:
             qs = qs.filter(id=user.id)
+        print(2)
         
         return qs
 
@@ -79,7 +82,7 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
         serializer.save(is_patient=True)
 
 
-class PatientRetriveAPIView(generics.RetriveAPIView):
+class PatientRetriveDestroyAPIView(generics.RetrieveDestroyAPIView):
     serializer_class = PatientSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -92,6 +95,9 @@ class PatientRetriveAPIView(generics.RetriveAPIView):
             qs = qs.filter(id=user.id)
         
         return qs
+    
+    def delete(self, request, *args, **kwargs):
+        return Response({'message':'Unimplemented.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class AppointmentListCreateAPIView(generics.ListCreateAPIView):
@@ -154,7 +160,8 @@ class AppointmentRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
                 status = request.data['status']
                 if status == 'CONFIRMED':
                     return Response({'message':'Can only check in 3 hours before appointment.'}, status=status.HTTP_400_BAD_REQUEST)
-
+            except:
+                pass
         super().update(self, request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
@@ -215,5 +222,28 @@ class DoctorListCreateAPIView(generics.ListCreateAPIView):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def get_appt(request):
+    user = request.user
+    if not user.is_patient:
+        return Response({'message': "Only Patient has access to this."}, status=status.HTTP_401_UNAUTHORIZED)
+
+    sched_data = JSONParser().parse(request)
+    time = request.data['date']
+
+    # get clinics in postcode
+    # get available appts on date
+
+    cust_postcode = user.addr_postcode
+    clinics = Clinic.objects.filter(id__addr_postcode=cust_postcode)
+    all_appts = Appointment.objects.none()
+    for clinic in clinics:
+        appts = Appointment.objects.filter(status='AVAILABLE').filter(clinic=clinic.name)
+        all_appts |= appts
+    
+    return Response(all_appts, safe=False)
 
 
