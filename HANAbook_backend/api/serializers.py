@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        extra_kwargs = {'password': {'write_only': True}}
         fields = '__all__'
         read_only_fields = (
             'is_staff', 'is_active', 'date_joined', 'is_clinic', 'is_patient'

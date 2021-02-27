@@ -121,11 +121,15 @@ class Patient(User):
 
 
 class Appointment(models.Model):
-    clinic_name = models.ForeignKey(Clinic, to_field='name', db_column='clinic_name', on_delete=models.CASCADE)
-    date_time = models.DateTimeField(auto_now_add=True)
-    patient = models.ForeignKey(Patient, to_field='name', db_column='patient_name', on_delete=models.CASCADE)
-    doctor = models.ForeignKey(Doctor, to_field='name', db_column='doctor_name', on_delete=models.CASCADE)
-    status = models.CharField(max_length=10, choices=APPT_STATUS)
+    clinic = models.ForeignKey(Clinic, to_field='name', db_column='clinic_name', on_delete=models.CASCADE)
+    date_time = models.DateTimeField(null=True, blank=True)
+    patient = models.ForeignKey(Patient, to_field='name', db_column='patient_name', on_delete=models.CASCADE, null=True, blank=True)
+    doctor = models.ForeignKey(Doctor, to_field='name', db_column='doctor_name', on_delete=models.CASCADE, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=APPT_STATUS, default='AVAILABLE')
+
+    def save(self, *args, **kwargs):
+        if self.date_time == None:
+            self.date_time = datetime.datetime.now()
 
 
 class Doctor(models.Model):
