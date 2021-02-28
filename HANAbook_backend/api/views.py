@@ -127,7 +127,7 @@ class AppointmentListCreateAPIView(generics.ListCreateAPIView):
         if user.is_clinic:
             clinic = Clinic.objects.get(id=user.id)
             request.data['clinic'] = clinic.name
-        if request.data['date_time'] > datetime.datetime.now():
+        if request.data['date_time'] > datetime.now():
             return Response({'message': "Please set a time that hasn't passed yet."}, status=status.HTTP_401_UNAUTHORIZED)
         
         serializer = self.get_serializer(data=request.data)
@@ -159,7 +159,7 @@ class AppointmentRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
             except:
                 pass
 
-        time_to_appt = request.data['date_time'] - datetime.datetime.now()
+        time_to_appt = request.data['date_time'] - datetime.now()
         time_to_appt = time_to_appt.total_seconds() / (60 * 60)
         if time_to_appt > CHECK_IN_TIME_LIMIT:
             try:
