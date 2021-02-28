@@ -1,0 +1,1 @@
+__NUXT_JSONP__("/clinic/schedules", {data:[{}],fetch:[],mutations:[]});
