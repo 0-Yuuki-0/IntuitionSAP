@@ -13,35 +13,18 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label for="name" class="form-label">Choose Hospital/Clinic</label>
-                            <select name="" class='form-control' id="">
-                                <option value="">National Hospital ~ 0.38 KM</option>
+                            <select name="" class='form-control' id=""  v-model="clinic">
+                                <option value="" v-for="(clinic, index) in clinics" :key="index">{{clinic.name}}</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="name" class="form-label">Choose Appointment Date</label>
-                            <input type="date" class="form-control" id="name" placeholder="John Doe">
+                            <input type="date" class="form-control" id="name" placeholder="John Doe" v-model="date">
                         </div>
                         <div class="mb-3">
-                            <label for="">Available Appointment Time (Choose one)</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                                <label class="form-check-label" for="flexRadioDefault1">
-                                    09:00
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                                <label class="form-check-label" for="flexRadioDefault1">
-                                    10:00
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                                <label class="form-check-label" for="flexRadioDefault1">
-                                    13:00
-                                </label>
-                            </div>
-                            <button class="btn btn-primary float-end">Submit</button>
+                            <label for="">Appointment Time</label>
+                            <input type="time" name="" class='form-control' v-model="time" id="">
+                            <button class="btn btn-primary float-end" @click="submit">Submit</button>
                         </div>
                     </div>
                 </div>
@@ -54,46 +37,32 @@
 <script>
 export default {
   layout: 'sidebar-user',
+  methods: {
+    addAppointment() {
+      this.$axios.post()
+    },
+    getClinics() {
+      this.$axios.get('/api/clinics')
+        .then(res => {
+          console.log(res.data);
+        });
+    },
+    submit() {
+      this.$axios.get('/api/appointments', {clinic: this.clinic, date_time: `${this.date} ${this.time}`, patient: this.$store.state.user.id})
+        .then(res => {
+          console.log(res.data)
+        });
+    },
+  },
+  mounted() {
+    this.getClinics();
+  },
   data() {
     return {
-      peoplesVaccined: {
-        annotations: {
-          position: "back",
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        chart: {
-          type: "bar",
-        },
-        fill: {
-          opacity: 1,
-        },
-        plotOptions: {},
-        series: [
-          {
-            name: "People",
-            data: [9, 20, 30, 20, 10, 20, 30, 20, 10, 20, 30, 20],
-          },
-        ],
-        colors: "#435ebe",
-        xaxis: {
-          categories: [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ],
-        },
-      },
+      clinics: [],
+      clinic: '',
+      date: '',
+      time: '',
     };
   },
 };

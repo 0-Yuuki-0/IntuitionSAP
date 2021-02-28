@@ -10,6 +10,15 @@
         </div>
     </div>
 </template>
-<style lang="scss">
-@import "@/assets/scss/pages/auth.scss";
+<style scoped>
+#auth {
+    background-color: #fff;
+    height: 100vh;
+    overflow-x: hidden;
+}
+
+#auth-right {
+    height: 100%;
+    background:  url(~assets/images/bg/4853433.jpg),linear-gradient(90deg,#2d499d,#3f5491);
+}
 </style>

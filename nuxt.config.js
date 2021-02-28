@@ -44,8 +44,13 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    '@nuxtjs/style-resources'
+    '@nuxtjs/style-resources',
+    '@nuxtjs/axios'
   ],
+
+  axios: {
+    baseURL: 'https://hanadatabase.cfapps.eu10.hana.ondemand.com', // Used as fallback if no runtime config is provided
+  },
 
   styleResources: {
     scss: [

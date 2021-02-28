@@ -43,18 +43,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>32315</td>
+                                <tr v-for="(appointment,index) in appointments" :key="index">
+                                    <td>{{key}}</td>
                                     <td>Singapore Hospital</td>
                                     <td>02 Mar 2021</td>
                                     <td>14:00</td>
-                                    <td>Dr. John</td>
-                                </tr>
-                                <tr>
-                                    <td>32315</td>
-                                    <td>Malaysia Hospital</td>
-                                    <td>16 Mar 2021</td>
-                                    <td>10:00</td>
                                     <td>Dr. John</td>
                                 </tr>
                             </tbody>
@@ -70,8 +63,22 @@
 <script>
 export default {
   layout: 'sidebar-user',
+  
+  mounted() {
+    this.getData();
+  },
+  methods: {
+    getData() {
+      //get all appointment
+      this.$axios.get('/api/appointments', {headers: {Authorization: `Bearer  ${this.$store.state.token}`}})
+        .then(res => {
+          this.appointments = res.data;
+        })
+    }
+  },
   data() {
     return {
+      appointments: [],
       peoplesVaccined: {
         annotations: {
           position: "back",
