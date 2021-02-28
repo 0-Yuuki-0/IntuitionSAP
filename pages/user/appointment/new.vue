@@ -44,7 +44,8 @@ export default {
     getClinics() {
       this.$axios.get('/api/clinics')
         .then(res => {
-          console.log(res.data);
+          this.clinics = res.data;
+          
         });
     },
     submit() {
