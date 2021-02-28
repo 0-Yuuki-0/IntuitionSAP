@@ -44,9 +44,9 @@ class ClinicListCreateAPIView(generics.ListCreateAPIView):
         qs = Clinic.objects.all()
 
         # custom filters
-        # username = self.request.query_params.get('username')
-        # if username != None:
-        #     qs = qs.filter(username=username)
+        name = self.request.query_params.get('name')
+        if name != None:
+            qs = qs.filter(name=name)
         
         return qs
 
@@ -65,9 +65,9 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
         print(1)
 
         # custom filters
-        # username = self.request.query_params.get('username')
-        # if username != None:
-        #     qs = qs.filter(username=username)
+        name = self.request.query_params.get('name')
+        if name != None:
+            qs = qs.filter(name=name)
 
         # filter by permissions
         if user.is_anonymous:
@@ -108,9 +108,18 @@ class AppointmentListCreateAPIView(generics.ListCreateAPIView):
         qs = Appointment.objects.all()
 
         # custom filters
-        # username = self.request.query_params.get('username')
-        # if username != None:
-        #     qs = qs.filter(username=username)
+        clinic = self.request.query_params.get('clinic')
+        patient = self.request.query_params.get('patient')
+        status = self.request.query_params.get('status')
+        date_time = self.request.query_params.get('date_time')
+        if clinic != None:
+            qs = qs.filter(clinic=clinic)
+        if patient != None:
+            qs = qs.filter(patient=patient)
+        if status != None:
+            qs = qs.filter(status=status)
+        if date_time != None:
+            qs = qs.filter(date_time=date_time)
         
         return qs
     
