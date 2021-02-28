@@ -8,3 +8,4 @@ PyJWT
 pytz
 setuptools
 sqlparse
+python-dotenv
