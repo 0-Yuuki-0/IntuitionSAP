@@ -254,3 +254,21 @@ def get_appt(request):
     return Response(all_appts, safe=False)
 
 
+class UserListAPIView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        qs = User.objects.all()
+
+        user = self.request.user
+        if user.is_anonymous:
+            return User.objects.none()
+        qs = qs.filter(id=user.id)
+
+        # if obj.is_clinic:
+        #     qs = Clinic.objects.filter(id=user.id)
+        # elif obj.is_patient:
+        #     qs = Patient.objects.filter(id=user.id)
+        
+        return qs
