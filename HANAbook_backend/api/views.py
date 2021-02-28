@@ -127,17 +127,26 @@ class AppointmentListCreateAPIView(generics.ListCreateAPIView):
         if user.is_clinic:
             clinic = Clinic.objects.get(id=user.id)
             request.data['clinic'] = clinic.name
-        if request.data['date_time'] > datetime.now():
-            return Response({'message': "Please set a time that hasn't passed yet."}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            date_time = request.data['date_time']
+            if request.data['date_time'] > datetime.now():
+                return Response({'message': "Please set a time that hasn't passed yet."}, status=status.HTTP_401_UNAUTHORIZED)
+        except:
+            pass
         
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        insatnce = self.perform_create(serializer)
+        print(insatnce)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+    def perform_create(self, serializer):
+        return serializer.save()
+
 
 class AppointmentRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
+    queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -185,30 +194,35 @@ def generate_appts(request):
 
     appt_data = JSONParser().parse(request)
 
-    start = request.data['start_time']
-    end = request.data['end_time']
-    duration = request.data['appt_duration_minutes']
+    start_time = appt_data['start_time']
+    start = datetime.strptime(start_time, '%H:%M')
+    end_time = appt_data['end_time']
+    end = datetime.strptime(end_time, '%H:%M')
+    duration = appt_data['appt_duration_minutes']
     final_appt = end - timedelta(minutes=duration)
     times = []
     next_appt = start
     while final_appt > next_appt:
-        times.append(next_appt)
+        times.append(next_appt.time())
         next_appt = next_appt + timedelta(minutes=duration)
     
-    dates = request.data['dates']
-    clinic = request.data['clinic']
+    dates = appt_data['dates']
+    clinic_ = appt_data['clinic']
+    clinic = Clinic.objects.get(name=clinic_)
     all_appts = []
-    for day in dates:
+    for day_ in dates:
+        day = datetime.strptime(day_, '%Y-%m-%d')
         for time in times:
+            date_time = datetime.combine(day, time)
             instance = Appointment(
                 clinic=clinic,
-                date_time=time
+                date_time=date_time
             )
             instance.save()
             all_appts.append(instance)
     
     # return JsonResponse(all_appts, safe=False)
-    return Response(all_appts, safe=False)
+    return Response(all_appts)
 
 
 class DoctorListCreateAPIView(generics.ListCreateAPIView):
@@ -239,10 +253,7 @@ def get_appt(request):
         return Response({'message': "Only Patient has access to this."}, status=status.HTTP_401_UNAUTHORIZED)
 
     sched_data = JSONParser().parse(request)
-    time = request.data['date']
-
-    # get clinics in postcode
-    # get available appts on date
+    time = sched_data['date']
 
     cust_postcode = user.addr_postcode
     clinics = Clinic.objects.filter(id__addr_postcode=cust_postcode)
@@ -251,7 +262,7 @@ def get_appt(request):
         appts = Appointment.objects.filter(status='AVAILABLE').filter(clinic=clinic.name)
         all_appts |= appts
     
-    return Response(all_appts, safe=False)
+    return Response(all_appts)
 
 
 class UserListAPIView(generics.ListAPIView):
