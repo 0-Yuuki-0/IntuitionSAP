@@ -62,8 +62,6 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
         qs = Patient.objects.all()
         user = self.request.user
 
-        print(1)
-
         # custom filters
         name = self.request.query_params.get('name')
         if name != None:
@@ -71,10 +69,9 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
 
         # filter by permissions
         if user.is_anonymous:
-            return Response({'message': "Sign in to view Patients."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Patient.objects.none()
         elif user.is_patient:
             qs = qs.filter(id=user.id)
-        print(2)
         
         return qs
 
@@ -130,7 +127,7 @@ class AppointmentListCreateAPIView(generics.ListCreateAPIView):
         if user.is_clinic:
             clinic = Clinic.objects.get(id=user.id)
             request.data['clinic'] = clinic.name
-        if request.data['date_time'] > datetime.datetime.now():
+        if request.data['date_time'] > datetime.now():
             return Response({'message': "Please set a time that hasn't passed yet."}, status=status.HTTP_401_UNAUTHORIZED)
         
         serializer = self.get_serializer(data=request.data)
@@ -162,7 +159,7 @@ class AppointmentRetrieveDestroyAPIView(generics.RetrieveDestroyAPIView):
             except:
                 pass
 
-        time_to_appt = request.data['date_time'] - datetime.datetime.now()
+        time_to_appt = request.data['date_time'] - datetime.now()
         time_to_appt = time_to_appt.total_seconds() / (60 * 60)
         if time_to_appt > CHECK_IN_TIME_LIMIT:
             try:
@@ -215,6 +212,7 @@ def generate_appts(request):
 
 
 class DoctorListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -256,3 +254,21 @@ def get_appt(request):
     return Response(all_appts, safe=False)
 
 
+class UserListAPIView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        qs = User.objects.all()
+
+        user = self.request.user
+        if user.is_anonymous:
+            return User.objects.none()
+        qs = qs.filter(id=user.id)
+
+        # if obj.is_clinic:
+        #     qs = Clinic.objects.filter(id=user.id)
+        # elif obj.is_patient:
+        #     qs = Patient.objects.filter(id=user.id)
+        
+        return qs

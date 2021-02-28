@@ -40,7 +40,7 @@ class PatientSerializer(serializers.ModelSerializer):
         password = make_password(password)
         validated_data.update({'password':password})
         try:
-            instance = Clinic._default_manager.create(**validated_data)
+            instance = Patient._default_manager.create(**validated_data)
         except TypeError:
             raise TypeError('TypeError')
         return instance

@@ -78,7 +78,8 @@ class Patient(User):
     
     def save(self, *args, **kwargs):
         if not self.pk:
-            today = datetime.date.today()
+            # today = datetime.date.today()
+            today = datetime.now()
             age = today.year - self.dob.year
             if today.month < self.dob.month or (today.month == self.dob.month and today.day < self.dob.day):
                 age -= 1
@@ -106,4 +107,4 @@ class Appointment(models.Model):
 
     def save(self, *args, **kwargs):
         if self.date_time == None:
-            self.date_time = datetime.datetime.now()
+            self.date_time = datetime.now()

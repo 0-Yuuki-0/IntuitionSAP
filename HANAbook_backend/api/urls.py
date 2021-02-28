@@ -25,5 +25,6 @@ urlpatterns = [
     path('clinics/', include(clinic_patterns)),
     path('patients/', include(patient_patterns)),
     path('appointments/', include(appointment_patterns)),
-    path('doctors/', include(doctor_patterns))
+    path('doctors/', include(doctor_patterns)),
+    path('token/get_user/', UserListAPIView.as_view())
 ]
