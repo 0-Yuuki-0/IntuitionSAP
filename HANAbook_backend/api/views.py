@@ -62,8 +62,6 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
         qs = Patient.objects.all()
         user = self.request.user
 
-        print(1)
-
         # custom filters
         name = self.request.query_params.get('name')
         if name != None:
@@ -71,10 +69,9 @@ class PatientListCreateAPIView(generics.ListCreateAPIView):
 
         # filter by permissions
         if user.is_anonymous:
-            return Response({'message': "Sign in to view Patients."}, status=status.HTTP_401_UNAUTHORIZED)
+            return Patient.objects.none()
         elif user.is_patient:
             qs = qs.filter(id=user.id)
-        print(2)
         
         return qs
 
@@ -215,6 +212,7 @@ def generate_appts(request):
 
 
 class DoctorListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
     permission_classes = [permissions.IsAuthenticated]
 
